@@ -1,6 +1,5 @@
 import aiohttp
 import asyncio
-import sys
 import json
 from billiard import Pool
 import argparse
@@ -8,11 +7,11 @@ import argparse
 
 def criteria_for_miss_spells(keyword, suggestions):
     if not suggestions == []:
-        shortest_keyword_suggestion = min([word for word in suggestions if word], key=len)
-        splitted_keyword = keyword.split()
-        splitted_shortest_suggestions = shortest_keyword_suggestion.split()
+        shortest_suggestion = min([word for word in suggestions if word], key=len)
+        keyword_data = keyword.split()
+        suggestions_data = shortest_suggestion.split()
         is_misspelled = True
-        order_present = False
+        order_present = True
 
         if keyword in suggestions:
             is_misspelled = False
@@ -20,33 +19,32 @@ def criteria_for_miss_spells(keyword, suggestions):
         if len(keyword) <= 2:
             is_misspelled = False
 
-        for word in splitted_shortest_suggestions:
-            if word in keyword:   
-                order_present = True
+        for i , word in enumerate(keyword_data):
+            if word not in suggestions_data[i]:
+                order_present = False
                 break
-            
-        if (len(splitted_keyword) < len(splitted_shortest_suggestions)
+
+        if (len(keyword_data) < len(suggestions_data)
             and order_present):
             is_misspelled = False
 
-        correct_keyword = shortest_keyword_suggestion if is_misspelled else None
+        correct_keyword = shortest_suggestion if is_misspelled else None
 
-        if is_misspelled is not None:
-            keyword_dict = {
-                'keyword': keyword,
-                'suggestions': suggestions,  
-                'is_misspelled': is_misspelled,
-                'correct_keyword': correct_keyword,
-            }
+        keyword_dict = {
+            'keyword': keyword,
+            'suggestions': suggestions,  
+            'is_misspelled': is_misspelled,
+            'correct_keyword': correct_keyword,
+        }
+        return keyword_dict
 
-        else:
-            keyword_dict = {
-                'keyword': keyword,
-                'data_found': True,
-                'is_misspelled': False,
-                'correct_keyword': ""
-            }
-
+    else:
+        keyword_dict = {
+            'keyword': keyword,
+            'data_found': False,
+            'is_misspelled': "",
+            'correct_keyword': "",
+        }
         return keyword_dict
 
 
@@ -57,16 +55,13 @@ async def fetch_suggestions(session, keyword):
     async with session.get(url) as response:
         try:
             response.raise_for_status()
-            response_text = await response.text()
-            data = json.loads(response_text)  
+            data = json.loads(await response.text())  
             return keyword, data[1]
         except aiohttp.ClientError:
             return keyword, None
 
 
 async def main(keywords):
-    processed_results_list = []
-
     connector = aiohttp.TCPConnector(ssl=False, limit=20)
     timeout = aiohttp.ClientTimeout(
         total=None,
