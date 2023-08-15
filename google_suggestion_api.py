@@ -15,24 +15,23 @@ def criteria_for_miss_spells(keyword, suggestions):
 
         if keyword in suggestions:
             is_misspelled = False
-        
+
         if len(keyword) <= 2:
             is_misspelled = False
 
-        for i , word in enumerate(keyword_data):
+        for i, word in enumerate(keyword_data):
             if word == suggestions_data[i]:
                 order_present = True
                 break
 
-        if (len(keyword_data) < len(suggestions_data)
-            and order_present):
+        if (len(keyword_data) < len(suggestions_data) and order_present):
             is_misspelled = False
 
         correct_keyword = shortest_suggestion if is_misspelled else None
 
         keyword_dict = {
             'keyword': keyword,
-            'suggestions': suggestions,  
+            'suggestions': suggestions,
             'is_misspelled': is_misspelled,
             'correct_keyword': correct_keyword,
         }
@@ -55,7 +54,7 @@ async def fetch_suggestions(session, keyword):
     async with session.get(url) as response:
         try:
             response.raise_for_status()
-            data = json.loads(await response.text())  
+            data = json.loads(await response.text())
             return keyword, data[1]
         except aiohttp.ClientError:
             return keyword, None

@@ -1,8 +1,8 @@
 import unittest
 from unittest.mock import Mock, patch
 import json
+from google_suggestion_api import fetch_suggestions
 
-from google_suggestion_api import fetch_suggestions  
 
 class TestFetchSuggestions(unittest.TestCase):
 
@@ -28,6 +28,3 @@ class TestFetchSuggestions(unittest.TestCase):
         result = await fetch_suggestions(mock_session, keyword)
 
         self.assertEqual(result, (keyword, None))
-
-
-unittest.main()
