@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import Mock, patch
 import json
 
-from GoogleSuggestonApi import fetch_suggestions  
+from google_suggestion_api import fetch_suggestions  
 
 class TestFetchSuggestions(unittest.TestCase):
 
@@ -29,5 +29,5 @@ class TestFetchSuggestions(unittest.TestCase):
 
         self.assertEqual(result, (keyword, None))
 
-if __name__ == '__main__':
-    unittest.main()
+
+unittest.main()

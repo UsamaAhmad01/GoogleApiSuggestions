@@ -6,12 +6,12 @@ import argparse
 
 
 def criteria_for_miss_spells(keyword, suggestions):
-    if not suggestions == []:
+    if suggestions:
         shortest_suggestion = min([word for word in suggestions if word], key=len)
         keyword_data = keyword.split()
         suggestions_data = shortest_suggestion.split()
         is_misspelled = True
-        order_present = True
+        order_present = False
 
         if keyword in suggestions:
             is_misspelled = False
@@ -20,8 +20,8 @@ def criteria_for_miss_spells(keyword, suggestions):
             is_misspelled = False
 
         for i , word in enumerate(keyword_data):
-            if word not in suggestions_data[i]:
-                order_present = False
+            if word == suggestions_data[i]:
+                order_present = True
                 break
 
         if (len(keyword_data) < len(suggestions_data)

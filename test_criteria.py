@@ -1,5 +1,5 @@
 import unittest
-from GoogleSuggestonApi import criteria_for_miss_spells 
+from google_suggestion_api import criteria_for_miss_spells 
 
 class TestCriteriaForMissSpells(unittest.TestCase):
 
@@ -78,7 +78,7 @@ class TestCriteriaForMissSpells(unittest.TestCase):
         
         self.assertEqual(result, expected_result)
 
-if __name__ == '__main__':
-    unittest.main()
+
+unittest.main()
 
 
